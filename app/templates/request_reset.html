@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Запрос нового пароля{% endblock %}
+
+{% block content %}
+    <div class="body-login">
+        <div class="form-container">
+            <div class="form-content">
+                <form method="post" class="form" id="email-form">
+                    <label for="email">Введите email</label>
+                    <input class="field" type="email" id="email" name="email">
+                    <div class="buttons-container">
+                        <button type="submit" id="send-btn">Отправить</button>
+                        <a class="link-button" href="{{ url_for('index.index') }}" id="home-btn">На главную</a>
+                    </div>
+                </form>
+                <div id="message"></div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script type="module">
+        import {setMessage} from "../../static/js/message.js";
+        console.log("{{url_for('request_reset_password.request_reset_password')}}")
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('email-form')
+            form.addEventListener('submit', async function (e) {
+                e.preventDefault()
+                const sendBtn = document.getElementById('send-btn')
+                const homeBtn = document.getElementById('home-btn')
+                sendBtn.disabled = true
+                homeBtn.disabled = true
+                const email = document.getElementById('email').value
+                if (!email) {
+                    setMessage('Вы не указали email', true)
+                } else {
+                    const response = await fetch("{{ url_for('request_reset_password.request_reset_password') }}", {
+                        method: "POST",
+                        headers: {"Content-Type": "application/json"},
+                        body: JSON.stringify({'email': email})
+                    })
+                    const data = await response.json()
+                    sendBtn.disabled = false
+                    homeBtn.disabled = false
+                    if (!!response.status && response.status === 200) {
+                        setMessage('Письмо с ссылкой на смену пароля отправлено вам на почту')
+                    } else if (!!response.status && response.status === 400) {
+                        setMessage(data.error, true)
+                    } else if (!!response.status && response.status === 500) {
+                        setMessage('Сервер не отвечает', true)
+                    }
+                }
+            })
+        })
+    </script>
+{% endblock %}

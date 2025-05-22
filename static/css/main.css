@@ -1,0 +1,306 @@
+@font-face {
+    font-family: 'Patrick Hand';
+    src: url('/static/fonts/PatrickHand-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+body {
+    font-family: 'Patrick Hand', cursive, sans-serif;
+    background-color: bisque;
+}
+
+.header {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    border: solid #333333;
+    background-color: #704214;
+    color: #fff;
+    text-align: center;
+    max-height: 150px;
+    height: 100px;
+    width: 100%;
+}
+
+.menu {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin-left: 0;
+    margin-right: auto;
+}
+
+.profile-btn {
+    display: flex;
+    margin-left: auto;
+    margin-right: 0;
+    margin-top: auto;
+    margin-bottom: 10px;
+    width: fit-content;
+    height: fit-content;
+    cursor: pointer;
+    text-align: center;
+    padding: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    transition: box-shadow 0.3s ease;
+}
+
+.profile-btn:hover {
+    background-color: #5a3411;
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.5);
+}
+
+.menu-btn {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding-bottom: 15px;
+    padding-inline: 10px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    transition: box-shadow 0.3s ease;
+}
+
+.about {
+    display: flex;
+    text-align: start;
+    border: solid #333333;
+    color: #333;
+    padding: 20px;
+    font-weight: bold;
+}
+
+.menu-btn:hover {
+    background-color: #5a3411;
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.5);
+}
+
+.body-login {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-size: cover;
+    background: url("bg_image/diary.png") repeat center;
+    width: 100%;
+    height: 100%;
+    min-height: 100vh;
+    margin: 0;
+}
+
+
+.form-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: saddlebrown ;
+    border-radius: 12px;
+    width: fit-content;
+    height: fit-content;
+}
+
+.form-container {
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    height: fit-content;
+    margin-inline: 30px;
+    margin-bottom: 20px;
+    margin-top: 20px;
+    background: blanchedalmond;
+    border-radius: 12px;
+    padding: 10px;
+}
+
+.form-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin: 5px;
+    padding: 8px;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-elem {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 3px;
+}
+
+.field {
+    background: blanchedalmond;
+    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.3);
+    border: none;
+    height: 25px;
+}
+
+.buttons-container {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+hr {
+    border: none;
+    background-color: black;
+    height: 1px;
+    margin: 8px 0;
+    width: 100%;
+}
+
+button {
+    font-family: 'Patrick Hand', cursive, sans-serif;
+    background: darksalmon;
+    border: none;
+    border-radius: 12px;
+    min-width: 50px;
+    min-height: 35px;
+    width: 90px;
+    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.3); /* тень */
+    cursor: pointer; /* курсор-указатель */
+    transition: all 0.2s ease; /* плавность при наведении */
+}
+
+button:hover {
+    background: saddlebrown;
+    box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.4); /* чуть больше тень при наведении */
+}
+
+button:disabled {
+    background: #777777;
+    cursor: not-allowed;
+    color: black;
+}
+
+button:disabled:hover {
+    background: #777777;
+    cursor: not-allowed;
+    color: black;
+}
+
+.clue {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 90px;
+    border: 1px solid black;
+}
+
+.link-button {
+    display: inline-block;
+    background: orange;
+    color: black;
+    text-decoration: none;
+    text-align: center;
+    width: 90px;
+    padding: 8px 16px;
+    border-radius: 12px;
+    font-family: 'Patrick Hand', cursive, sans-serif;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    transition: background 0.2s ease;
+}
+
+.link-button:hover {
+    background: darkorange;
+}
+
+@media (max-width: 600px) {
+    .buttons-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    #submit-btn,
+    .link-button,
+    .btn-delete {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+.item-section {
+    margin-bottom: 30px;
+}
+
+.item-subtitle {
+    color: #555;
+    margin-bottom: 5px;
+}
+
+.item-content {
+    font-size: 1.1em;
+    line-height: 1.5;
+    white-space: pre-wrap;
+}
+
+.item-date-label {
+    color: #777;
+    font-style: italic;
+}
+
+.item-date {
+    margin-top: 5px;
+    font-size: 12px;
+    color: #777;
+}
+
+.item-title {
+    border-bottom: 2px solid #444;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.error-message {
+    color: red;
+}
+.success-message {
+    color: green;
+}
+
+.tooltip-container {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    width: fit-content;
+    height: fit-content;
+}
+
+.tooltip-text {
+    visibility: hidden;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 6px 10px;
+    border-radius: 6px;
+    position: absolute;
+    z-index: 10;
+    bottom: 125%; /* позиция над иконкой */
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.2s;
+    font-size: 14px;
+}
+
+.tooltip-container:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
+
+
+.input-day {
+    background-color: bisque;
+    border: bisque;
+    font-size: 2rem;
+    color: #333;
+}

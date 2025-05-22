@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}Регистрация{% endblock %}
+
+{% block content %}
+    <div class="body-login">
+        <div class="form-container">
+            <div class="form-content">
+                <form method="post" action="{{ url_for('registration.registration') }}" class="form" id="registration-form">
+                    <div class="form-elem">
+                        <label for="login">Логин*</label>
+                        <input class="field" type="text" name="login" id="login" required>
+                    </div>
+                    <div class="form-elem">
+                        <label for="password">Пароль*</label>
+                        <input class="field" type="password" name="password" id="password" required>
+                    </div>
+                    <div class="form-elem">
+                        <label for="confirm">Подтверждение пароля*</label>
+                        <input class="field" type="password" name="confirm" id="confirm" required>
+
+                        <div class="tooltip-container">
+                            <div class="clue">
+                                <img src="{{ url_for('static', filename='icons/question_icon.svg') }}" alt="Подсказка">
+                            </div>
+                            <div class="tooltip-text">В пароле должны содержаться как минимум одна цифра, прописная и заглавная буквы.<br>Минимальная длина пароля - 8 символов.<br>Допустимые нестандартные символы: -_.,@!$%#</div>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="name">Имя</label>
+                        <input class="field" type="text" name="name" id="name">
+                    </div>
+                    <div>
+                        <label for="email">Email</label>
+                        <input class="field" type="email" name="email" id="email">
+                    </div>
+                    <div style="display: flex; width: 100%; justify-content: center; gap: 0.2rem;">
+                        <button type="submit" id="submit-btn">Отправить</button>
+                        <a class="link-button" href="{{ url_for('index.index') }}">На главную</a>
+                    </div>
+                </form>
+                <div id="message"></div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script type="module">
+        import {setMessage} from "../../static/js/message.js";
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('registration-form');
+            form.addEventListener('submit', async function (e) {
+                e.preventDefault();
+                const submitBtn = document.getElementById('submit-btn')
+                submitBtn.disabled = true
+                const login = document.getElementById('login').value;
+                const password = document.getElementById('password').value;
+                const email = document.getElementById('email').value;
+                const name = document.getElementById('name').value;
+                const confirm = document.getElementById('confirm').value;
+                if (!password) {
+                    setMessage('Не указан пароль', true)
+                } else if (password.length < 8) {
+                    setMessage('Пароль слишком короткий<br>Минимальная длина - 8 символов', true)
+                } else if (!confirm) {
+                    setMessage('Повторите пароль', true)
+                } else if (confirm !== password) {
+                    setMessage('Пароли не совпадают', true)
+                } else {
+                    const valid_result = await fetch("{{ url_for('check_data.check_data') }}", {
+                        method: "POST",
+                        headers: {"Content-Type": "application/json"},
+                        body: JSON.stringify({
+                            login: login,
+                            password: password,
+                            email: email,
+                            confirm: confirm
+                        })
+                    });
+                    if (!!valid_result.status && valid_result.status === 200) {
+                        const response = await fetch("{{ url_for('confirm_email.confirm_email') }}", {
+                            method: "POST",
+                            headers: {"Content-Type": "application/json"},
+                            body: JSON.stringify({
+                                login: login,
+                                password: password,
+                                email: email,
+                                name: name,
+                            })
+                        });
+                        if (!!response.status && response.status === 200) {
+                            setMessage('Ссылка для подтверждения пароля была отправлена вам на почту')
+                        } else {
+                            setMessage('Сервер не отвечает', true)
+                        }
+
+                    } else if (!!valid_result.status && valid_result.status === 400) {
+                        const data = await valid_result.json();
+                        setMessage(data.error, true)
+                    } else if (!!valid_result.status && valid_result.status === 500) {
+                        setMessage('Сервер не отвечает', true)
+                    }
+                }
+                submitBtn.disabled = false
+            });
+        });
+    </script>
+{% endblock %}

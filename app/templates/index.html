@@ -1,0 +1,285 @@
+{% extends "base.html" %}
+
+{% block title %}Главная страница{% endblock %}
+
+{% block style %}
+    <style>
+        .notebook-container {
+            display: flex;
+            justify-content: center;
+            padding: 50px;
+            gap: 10rem;
+            flex-wrap: wrap;
+        }
+
+        .page {
+            background: blanchedalmond;
+            padding: 30px;
+            width: 100%;
+            max-width: 600px;
+            height: 600px;
+            overflow-y: auto;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            box-sizing: border-box;
+        }
+
+        .page-left2 {
+            background: blanchedalmond;
+            padding-left: 10px;
+            width: 100%;
+            max-width: 600px;
+            height: 600px;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            box-sizing: border-box;
+        }
+
+        .page-left3 {
+            background: blanchedalmond;
+            padding-left: 10px;
+            width: 100%;
+            max-width: 600px;
+            height: 600px;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            box-sizing: border-box;
+        }
+
+        .page-left4 {
+            background: blanchedalmond;
+            padding-left: 10px;
+            width: 100%;
+            max-width: 600px;
+            height: 600px;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            box-sizing: border-box;
+        }
+
+        .page-right2 {
+            background: blanchedalmond;
+            padding-right: 10px;
+            width: 100%;
+            max-width: 600px;
+            height: 600px;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            box-sizing: border-box;
+        }
+
+        .page-right3 {
+            background: blanchedalmond;
+            padding-right: 10px;
+            width: 100%;
+            max-width: 600px;
+            height: 600px;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            box-sizing: border-box;
+        }
+
+        .page-right4 {
+            background: blanchedalmond;
+            padding-right: 10px;
+            width: 100%;
+            max-width: 600px;
+            height: 600px;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            box-sizing: border-box;
+        }
+
+        .note {
+            display: flex;
+            flex-direction: row;
+            margin-bottom: 40px;
+            border-bottom: 1px dashed #555;
+            padding-bottom: 10px;
+            gap: 1rem;
+        }
+
+        .note-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .note-status {
+            margin-top: 5px;
+            color: #444;
+        }
+
+        .button-row {
+            text-align: center;
+            margin-top: 40px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn {
+            background-color: #704214;
+            color: #fff;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: background-color 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .btn:hover {
+            background-color: #5a3411;
+        }
+
+        .date-selector {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .date-selector button {
+            background: linear-gradient(to bottom, #f0f0f0, #dcdcdc);
+            border: 1px solid #aaa;
+            border-radius: 8px;
+            padding: 6px 10px;
+            cursor: pointer;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.2),
+                        inset -1px -1px 0 rgba(255,255,255,0.6),
+                        inset 1px 1px 0 rgba(0,0,0,0.1);
+            transition: transform 0.1s ease;
+        }
+
+        .date-selector button:hover {
+            background: linear-gradient(to bottom, #e0e0e0, #c8c8c8);
+        }
+
+        .date-selector button:active {
+            transform: translateY(1px);
+            box-shadow: inset 2px 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .date-selector img {
+            width: 24px;
+            height: 24px;
+            display: block;
+        }
+
+        .weekday {
+            display: flex;
+            justify-self: center;
+        }
+
+        .invisible {
+          visibility: hidden;
+        }
+
+        @media (max-width: 768px) {
+            .notebook-container {
+                flex-direction: column;
+                padding: 20px;
+                gap: 20px;
+            }
+
+            .page {
+                width: 100%;
+                height: auto;
+                max-height: none;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <h1 style="text-align: center; color: #333;">Ежедневник {{ data.name }}</h1>
+
+    <h2 class="weekday" id="week-day">{{ weekday }}</h2>
+    <div class="date-selector">
+        <button class="left-arrow" id="left-arrow">
+            <img src="{{ url_for('static', filename='icons/arrow-left.svg') }}" alt="Предыдущий день">
+        </button>
+        <input class="invisible input-day" id="date-field" type="date">
+        <button class="right-arrow" id="right-arrow">
+            <img src="{{ url_for('static', filename='icons/arrow-right.svg') }}" alt="Следующий день">
+        </button>
+    </div>
+
+
+    <div class="notebook-container">
+        <div class="page-left4">
+            <div class="page-left3">
+                <div class="page-left2">
+                    <div class="page">
+                        {% if not data.notes %}
+                            <p style="text-align: center; color: #444;">Записей пока нет</p>
+                        {% else %}
+                        {% for note in data.notes[::2] %}
+                            <div class="note" onclick="window.location.href='{{ url_for('note_detail.note_detail', note_id=note.note_id) }}'" style="cursor: pointer;">
+                                <div>
+                                    <div class="note-title">{{ note.title }}</div>
+                                    <div class="note-status">{% if note.is_done %}Выполнено{% else %}Не выполнено{% endif %}</div>
+                                    <div class="note-date">Выполнить до: {{ note.on_date }}</div>
+                                </div>
+                                <div style="display: flex; gap: 0.2rem; flex-direction: column; align-items: center; margin-right: 0; max-width:60px; margin-left: auto; padding-right: 50px;">
+                                    <a class="link-button" href="{{ url_for('edit_note.edit_note', note_id=note.note_id) }}">Изменить</a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                        {%  endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="page-right4">
+            <div class="page-right3">
+                <div class="page-right2">
+                    <div class="page">
+                        {% if not data.notes %}
+                            <p style="text-align: center; color: #444;">Записей пока нет</p>
+                        {% else %}
+                        {% for note in data.notes[1::2] %}
+                            <div class="note" onclick="window.location.href='{{ url_for('note_detail.note_detail', note_id=note.note_id) }}'" style="cursor: pointer;">
+                                <div>
+                                    <div class="note-title">{{ note.title }}</div>
+                                    <div class="note-status">{% if note.is_done %}Выполнено{% else %}Не выполнено{% endif %}</div>
+                                    <div class="note-date">=Выполнить до: {{ note.on_date }}</div>
+                                </div>
+                                <div style="display: flex; gap: 0.2rem; flex-direction: column; align-items: center; margin-right: 0; max-width:60px; margin-left: auto; padding-right: 50px;">
+                                    <a class="link-button" href="{{ url_for('edit_note.edit_note', note_id=note.note_id) }}">Изменить</a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="button-row">
+        <a class="btn" href="{{ url_for('add_note.add_note') }}">Создать запись</a>
+        <a class="btn" href="{{ url_for('logout.logout') }}">Выход</a>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script type="module" src="{{ url_for('static', filename='js/initDateField.js') }}"></script>
+    <script type="module">
+        import {dateToInput} from "../../static/js/formatDate.js";
+        import {weekDays} from "../../static/js/weekDays.js";
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const dateField = document.getElementById('date-field');
+            const settedDate = "{{ setted_date }}"
+            const today = new Date(settedDate)
+            const weekDay = document.getElementById('week-day')
+            weekDay.textContent = weekDays[today.getDay()]
+
+            dateField.value = dateToInput(today, 10);
+            dateField.classList.remove('invisible');
+        })
+    </script>
+{% endblock %}

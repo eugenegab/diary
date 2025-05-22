@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Вход{% endblock %}
+
+{% block content %}
+    <div class="body-login">
+        <div class="form-container">
+            <div class="form-content">
+                <form method="post" action="{{ url_for('login.log_in') }}" class="form" id="login-form">
+                    <div class="form-elem">
+                        <label for="login">Логин</label>
+                        <input class="field" type="text" name="login" id="login" required>
+                    </div>
+                    <div class="form-elem">
+                        <label for="password">Пароль</label>
+                        <input class="field" type="password" name="password" id="password" required>
+                    </div>
+                    <div style="display: flex; width: 100%; justify-content: center;">
+                        <button type="submit">Войти</button>
+                    </div>
+                </form>
+                <div style="color: red; text-align: start;" id="message"></div>
+            </div>
+            <div class="buttons-container">
+                <a class="link-button" href="{{ url_for('google_auth.login') }}">Вход через Google</a>
+                <a class="link-button" href="{{ url_for('registration.registration') }}">Регистрация</a>
+            </div>
+            <a style="display: flex; width: fit-content; height: fit-content; color: #333; margin-top: 2px; margin-left: auto; margin-right: auto;" href="{{ url_for('request_reset_form.request_reset_form') }}">Забыли пароль?</a>
+        </div>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('login-form');
+            form.addEventListener('submit', async function (e) {
+                e.preventDefault();
+                const login = document.getElementById('login');
+                const password = document.getElementById('password');
+
+                const response = await fetch("{{ url_for('login.log_in') }}", {
+                        method: "POST",
+                        headers: {"Content-Type": "application/json"},
+                        body: JSON.stringify({
+                            login: login.value,
+                            password: password.value,
+                        })
+                    });
+                    if (!!response.status && response.status === 200) {
+                        window.location.href = "{{ url_for("index.index") }}";
+
+                    } else if (!!response.status && [401, 404].includes(response.status)) {
+                        const message = document.getElementById('message');
+                        const data = await response.json();
+                        message.innerHTML = data.error;
+                    } else if (!!response.status && response.status === 500) {
+                        const message = document.getElementById('message');
+                        message.innerHTML = 'Произошла непредвиденная ошибка';
+                        const data = await response.json();
+                        console.log(data.error);
+                    }
+            })
+        })
+    </script>
+{% endblock %}

@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block title %}О нас{% endblock %}
+
+{% block content %}
+    <div style="display: flex; align-items: center">
+        <div class="about">{{ text|replace('\n', '<br>')|safe }}</div>
+    </div>
+{% endblock %}

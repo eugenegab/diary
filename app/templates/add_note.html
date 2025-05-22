@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}{% endblock %}
+
+{% block content %}
+    <h1>Добавление записи</h1>
+        <form method="post" action="{{ url_for('add_note.add_note') }}">
+        <p>
+            <label for="title">Название</label>
+            <input type="text" name="title" id="title" required>
+        </p>
+        <p>
+            <label for="content">Содержание</label>
+            <input type="text" name="content" id="content" required>
+        </p>
+        <input type="submit" value="Отправить">
+    </form>
+{% endblock %}

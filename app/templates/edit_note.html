@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% block title %}Редактирование записи{% endblock %}
+
+{% block style %}
+    <style>
+        .textarea-field {
+            width: 90%;
+            padding: 0.75rem;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 1rem;
+        }
+        .textarea-field {
+            resize: both;
+        }
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .custom-checkbox {
+            width: 20px;
+            height: 20px;
+            accent-color: #3498db;
+        }
+        .checkbox-label {
+            font-size: 1rem;
+        }
+
+        .btn-delete {
+            background-color: #e74c3c;
+            color: white;
+            max-width: 90px;
+            max-height: 50px;
+            border: none;
+            font-size: 1em;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .btn-delete:hover {
+            background-color: #c0392b;
+        }
+
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div style="display: flex; justify-content: center">
+        <div class="form-container" style="width: fit-content; box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);">
+            <div class="form-content">
+                <form method="post" action="{% if note %}{{ url_for('edit_note.edit_note', note_id=note['note_id']) }}{% else %}{{ url_for('add_note.add_note') }}{% endif %}" class="form">
+                    <div class="form-elem">
+                        <label for="title">Название</label>
+                        <input class="field" type="text" name="title" id="title">
+                    </div>
+                    <div class="form-elem">
+                        <label for="content">Содержание</label>
+                        <textarea class="textarea-field" name="content" id="content" rows="6"></textarea>
+                    </div>
+                    <div class="form-elem checkbox-wrapper">
+                        <input type="checkbox" name="is_done" id="is_done" class="custom-checkbox">
+                        <label for="is_done" class="checkbox-label">Выполнено</label>
+                    </div>
+                    <div class="form-elem">
+                        <label for="on_date">Срок до:</label>
+                        <input class="input-day" type="datetime-local" name="on_date" id="on_date" required>
+                    </div>
+                    <div class="buttons-container">
+                        <button id="submit-btn" type="submit">Сохранить</button>
+                        {% if back_url and 'profile' not in back_url %}
+                            <a class="link-button" href="{{ back_url }}">Назад</a>
+                        {% else %}
+                            <a class="link-button" href="{{ url_for('index.index') }}">К списку</a>
+                        {% endif %}
+                    </div>
+                </form>
+                {% if note %}
+                    <form method="POST" action="{{ url_for('delete_note.delete_note', note_id=note['note_id']) }}"
+                          onsubmit="return confirm('Вы уверены, что хотите удалить эту запись?');"
+                          style="display: flex; width: 100%; justify-content: center;">
+                        <button type="submit" class="btn-delete">Удалить</button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script type="module">
+        import {dateToInput} from "../../static/js/formatDate.js";
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const noteData = {{ note|tojson|safe if note else 'null' }};
+
+            if (noteData) {
+                document.getElementById("title").value = noteData.title || '';
+                document.getElementById("content").value = noteData.content || '';
+                document.getElementById('on_date').value = noteData.on_date.replace(' ', 'T').slice(0, 16);
+                document.getElementById("is_done").checked = noteData.is_done === true;
+            } else {
+                document.getElementById("title").value = '';
+                document.getElementById("content").value = '';
+                document.getElementById("on_date").value = dateToInput(new Date());
+                document.getElementById("is_done").checked = false;
+            }
+        });
+    </script>
+{% endblock %}

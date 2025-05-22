@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    {% block style %}{% endblock %}
+</head>
+<body>
+    <div class="header">
+        <div class="menu">
+            <div class="menu-btn" onclick="window.location.href='{{ url_for('index.index') }}'">
+                <img src="{{ url_for('static', filename='icons/diary_logo.svg') }}" alt="Логотип" style="width: 100px; height: 200px;">
+                <h1>Главная</h1>
+            </div>
+            <div class="menu-btn" onclick="window.location.href='{{ url_for('about.about') }}'">
+                <h1>О нас</h1>
+            </div>
+        </div>
+        {% if session.get('user') %}
+            <div class="profile-btn" onclick="window.location.href='{{ url_for('profile.profile') }}'">
+                <h1>Мой профиль</h1>
+            </div>
+        {% endif %}
+    </div>
+    {% block content %}{% endblock %}
+    {% block script %}{% endblock %}
+</body>
+</html>

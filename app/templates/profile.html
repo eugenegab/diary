@@ -1,0 +1,211 @@
+{% extends "base.html" %}
+
+{% block title %}Профиль{% endblock %}
+
+{% block style %}
+<style>
+    .profile_container {
+        display: flex;
+        flex-direction: column;
+        padding: 10px;
+        background: blanchedalmond;
+        width: 900px;
+        border-radius: 12px;
+        margin: 20px 30px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .settings-buttons {
+        display: flex;
+        flex-direction: row;
+        align-items: end;
+        margin-left: auto;
+        margin-right: 0;
+        margin-top: 40px;
+        width: fit-content;
+        height: fit-content;
+        gap: 0.5rem;
+    }
+
+    .note-section {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        margin-bottom: 15px;
+        border-bottom: 1px dashed #555;
+    }
+
+    .note-subtitle {
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .note-content {
+        margin-bottom: 5px;
+    }
+
+    input[type="text"] {
+        padding: 4px;
+        font-size: 1rem;
+    }
+
+    .hidden {
+        display: none;
+    }
+
+    .buttons-container {
+        margin-top: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: center;">
+    <div class="profile_container">
+        <h1 class="login">Пользователь {{ user.name or user.login }}</h1>
+
+        {% for field in [{'name': 'login', 'rus': 'Логин'}, {'name': 'name', 'rus': 'Имя'}, {'name': 'email', 'rus': 'Email'}, {'name': 'password', 'rus': 'Пароль'}] %}
+        <section class="note-section">
+            <div style="display: flex; flex-direction: column; width: fit-content; height: fit-content; align-items: start;">
+                <h3 class="note-subtitle">{{ field.rus }}:</h3>
+                {% if field.name != 'password' %}
+                    <p class="note-content" data-field="{{ field.name }}">{{ user[field.name] }}</p>
+                    <input class="hidden" type="text" id="{{ field.name }}-field">
+                {% else %}
+                    <img class="note-content" src="{{ url_for('static', filename='icons/password_dots.svg') }}" alt="Пароль">
+                {% endif %}
+            </div>
+            <div class="settings-buttons">
+                <button class="hidden profile-btn" id="{{ field.name }}-save">Сохранить</button>
+                <button class="hidden profile-btn" id="{{ field.name }}-cancel">Отменить</button>
+                <button class="hidden profile-btn" id="edit-{{ field.name }}">Изменить</button>
+            </div>
+        </section>
+        {% endfor %}
+
+        <section class="note-section">
+            <div>
+                <h4 class="note-subtitle">Права:</h4>
+                <p class="note-content">{% if user.is_admin %}Администратор{% else %}Пользователь{% endif %}</p>
+            </div>
+        </section>
+
+        <section class="note-section">
+            <div>
+                <h4 class="note-subtitle">Дата регистрации</h4>
+                <p class="note-content">{{ user.created }}</p>
+            </div>
+        </section>
+
+        <div class="buttons-container">
+            <button class="edit-btn" id="settings-btn">Настройки</button>
+            {% if back_url and 'profile' not in back_url %}
+                <a class="link-button" href="{{ back_url }}">Назад</a>
+            {% else %}
+                <a class="link-button" href="{{ url_for('index.index') }}">К списку</a>
+            {% endif %}
+            <button class="hidden back-btn" id="back-btn">К профилю</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const fields = ['login', 'name', 'email', 'password'];
+    const settingsBtn = document.getElementById('settings-btn');
+
+    function enableEdit(field, userValue) {
+        const input = document.getElementById(`${field}-field`);
+        const content = document.querySelector(`.note-content[data-field="${field}"]`);
+        const saveBtn = document.getElementById(`${field}-save`);
+        const cancelBtn = document.getElementById(`${field}-cancel`);
+        const editBtn = document.getElementById(`edit-${field}`);
+
+        content.classList.add('hidden');
+        input.classList.remove('hidden');
+        input.value = userValue ? userValue : '';
+
+        saveBtn.classList.remove('hidden');
+        cancelBtn.classList.remove('hidden');
+        editBtn.classList.add('hidden');
+
+        // Сохранение
+        saveBtn.onclick = async () => {
+            const newValue = input.value.trim();
+            if (!newValue) return;
+
+            const response = await fetch("{{ url_for('edit_profile.edit_profile') }}", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ field: field, value: newValue })
+            });
+
+            if (response.ok) {
+                location.reload();
+            } else {
+                alert("Ошибка при сохранении");
+            }
+        };
+
+        cancelBtn.onclick = () => {
+            input.classList.add('hidden');
+            saveBtn.classList.add('hidden');
+            cancelBtn.classList.add('hidden');
+            content.classList.remove('hidden');
+            editBtn.classList.remove('hidden');
+        };
+    }
+
+    async function update_password() {
+        fields.forEach(field => {
+            const editBtn = document.getElementById(`edit-${field}`);
+            editBtn.disabled = true
+        })
+
+        const response = await fetch("{{ url_for('request_reset_password.request_reset_password') }}", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: "{{ user['email'] }}" })
+        });
+
+        if (response.ok || response.status === 200) {
+            fields.forEach(field => {
+                const editBtn = document.getElementById(`edit-${field}`);
+                editBtn.disabled = true
+            })
+            alert('Письмо с ссылкой для изменения пароля была отправлена вам на почту')
+            location.reload();
+        } else {
+            fields.forEach(field => {
+                const editBtn = document.getElementById(`edit-${field}`);
+                editBtn.disabled = true
+            })
+            alert("Ошибка при отправке");
+        }
+    }
+
+    settingsBtn.addEventListener('click', () => {
+        const backBtn = document.getElementById('back-btn')
+        backBtn.classList.remove('hidden')
+        backBtn.addEventListener('click', function () {
+            window.location.href = "{{ url_for('profile.profile') }}"
+        })
+        fields.forEach(field => {
+            const editBtn = document.getElementById(`edit-${field}`);
+            editBtn.classList.remove('hidden');
+
+            if (field === 'password') {
+                editBtn.addEventListener('click', () => update_password());
+            } else {
+                const userValue = document.querySelector(`.note-content[data-field="${field}"]`).textContent;
+                editBtn.addEventListener('click', () => enableEdit(field, userValue));
+            }
+        });
+
+        settingsBtn.disabled = true; // Чтобы не дублировать кнопки при повторном нажатии
+    });
+});
+</script>
+{% endblock %}
