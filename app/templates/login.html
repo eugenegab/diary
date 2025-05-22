@@ -33,6 +33,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const form = document.getElementById('login-form');
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
             form.addEventListener('submit', async function (e) {
                 e.preventDefault();
                 const login = document.getElementById('login');
@@ -40,7 +41,7 @@
 
                 const response = await fetch("{{ url_for('login.log_in') }}", {
                         method: "POST",
-                        headers: {"Content-Type": "application/json"},
+                        headers: {"Content-Type": "application/json", 'X-CSRFToken': csrfToken },
                         body: JSON.stringify({
                             login: login.value,
                             password: password.value,

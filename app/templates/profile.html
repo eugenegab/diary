@@ -115,6 +115,7 @@
 document.addEventListener("DOMContentLoaded", function () {
     const fields = ['login', 'name', 'email', 'password'];
     const settingsBtn = document.getElementById('settings-btn');
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
     function enableEdit(field, userValue) {
         const input = document.getElementById(`${field}-field`);
@@ -138,7 +139,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             const response = await fetch("{{ url_for('edit_profile.edit_profile') }}", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: { "Content-Type": "application/json", 'X-CSRFToken': csrfToken },
                 body: JSON.stringify({ field: field, value: newValue })
             });
 
@@ -166,7 +167,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const response = await fetch("{{ url_for('request_reset_password.request_reset_password') }}", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/json", 'X-CSRFToken': csrfToken },
             body: JSON.stringify({ email: "{{ user['email'] }}" })
         });
 

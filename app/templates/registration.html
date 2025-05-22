@@ -50,6 +50,7 @@
         import {setMessage} from "../../static/js/message.js";
 
         document.addEventListener('DOMContentLoaded', () => {
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
             const form = document.getElementById('registration-form');
             form.addEventListener('submit', async function (e) {
                 e.preventDefault();
@@ -71,7 +72,7 @@
                 } else {
                     const valid_result = await fetch("{{ url_for('check_data.check_data') }}", {
                         method: "POST",
-                        headers: {"Content-Type": "application/json"},
+                        headers: {"Content-Type": "application/json", 'X-CSRFToken': csrfToken},
                         body: JSON.stringify({
                             login: login,
                             password: password,
@@ -82,7 +83,7 @@
                     if (!!valid_result.status && valid_result.status === 200) {
                         const response = await fetch("{{ url_for('confirm_email.confirm_email') }}", {
                             method: "POST",
-                            headers: {"Content-Type": "application/json"},
+                            headers: {"Content-Type": "application/json", 'X-CSRFToken': csrfToken},
                             body: JSON.stringify({
                                 login: login,
                                 password: password,

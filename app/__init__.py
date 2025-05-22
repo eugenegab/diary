@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_migrate import Migrate
 from config import Config
-from .extensions import db, mail
+from .extensions import db, mail, csrf
 from .google_client import google_oauth
 from dotenv import load_dotenv
 import os
@@ -17,6 +17,7 @@ def create_app(test_config=None):
 
     db.init_app(app)
     mail.init_app(app)
+    csrf.init_app(app)
     migrate.init_app(app, db)
     google_oauth.init_app(app)
     google_oauth.register(

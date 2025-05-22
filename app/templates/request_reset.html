@@ -25,6 +25,7 @@
         import {setMessage} from "../../static/js/message.js";
         console.log("{{url_for('request_reset_password.request_reset_password')}}")
         document.addEventListener('DOMContentLoaded', () => {
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
             const form = document.getElementById('email-form')
             form.addEventListener('submit', async function (e) {
                 e.preventDefault()
@@ -38,7 +39,7 @@
                 } else {
                     const response = await fetch("{{ url_for('request_reset_password.request_reset_password') }}", {
                         method: "POST",
-                        headers: {"Content-Type": "application/json"},
+                        headers: {"Content-Type": "application/json", 'X-CSRFToken': csrfToken},
                         body: JSON.stringify({'email': email})
                     })
                     const data = await response.json()
